@@ -16,6 +16,8 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -285,9 +287,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private void requestorderan() {
 
-
-        String idUser = manager.getIdUser();
-        String token = manager.getToken();
+        int idUser = Integer.valueOf(manager.getIdUser());
         String awal = lokasiawal.getText().toString();
         String akhir = lokasitujuan.getText().toString();
         String ltawal = String.valueOf(latawal);
@@ -295,16 +295,28 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         String lgawal = String.valueOf(lonawal);
         String lgakhir = String.valueOf(lonakhir);
         String catatan = edtcatatan.getText().toString();
-        String jarak = txtjarak.getText().toString();
+        String token = manager.getToken().toString();
+//        float jarak = Float.valueOf(txtjarak.getText().toString());
+        float jarak1 = Float.valueOf(txtjarak.getText().toString().substring(0, txtjarak.getText().toString().indexOf("km")));
+
         String device = HeroHelper.getDeviceUUID(this).toString();
-        Log.d("UUIDIO", HeroHelper.getDeviceUUID(this));
 
         final ProgressDialog alert = ProgressDialog.show(MapsActivity.this, "Proses request order", "loading");
 
         RestApi api = InitRetrofit.getInstance();
         Call<ResponseInsertBooking> insertBookingCall = api.getInsertBooking(
-                idUser, ltawal, lgawal, awal, ltakhir, lgakhir, akhir, catatan, jarak, token, device
-        );
+                idUser,
+                ltawal,
+                lgawal,
+                ltakhir,
+                lgakhir,
+                akhir,
+                catatan,
+                jarak1,
+                token,
+                device,
+                awal
+                );
 
         insertBookingCall.enqueue(new Callback<ResponseInsertBooking>() {
             @Override
@@ -318,17 +330,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         Snackbar.make(rootlayout, msg, Snackbar.LENGTH_SHORT).show();
                         Intent i = new Intent(MapsActivity.this, FindDriverActivity.class);
                         i.putExtra(MyContants.IDBOOKING, idbooking);
+                        startActivity(i);
                     } else {
-                        Toast.makeText(gpsTracker, response.body().getMsg(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(MapsActivity.this, response.body().getMsg(), Toast.LENGTH_SHORT).show();
                     }
                 } else {
-                    Toast.makeText(gpsTracker, response.body().getMsg(), Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(MapsActivity.this, response.body().getMsg(), Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onFailure(Call<ResponseInsertBooking> call, Throwable t) {
-                Toast.makeText(gpsTracker, t.getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(MapsActivity.this, t.getMessage() + "AlA", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -498,5 +511,24 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             // other 'case' lines to check for other
             // permissions this app might request
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main_menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        if (id == R.id.history) {
+
+        } else if (id == R.id.logout) {
+            manager.logout();
+            finish();
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

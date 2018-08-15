@@ -2,6 +2,7 @@ package id.slametriyadi.ojekkece.network;
 
 import id.slametriyadi.ojekkece.model.ResponseCheckBooking;
 import id.slametriyadi.ojekkece.model.ResponseDaftar;
+import id.slametriyadi.ojekkece.model.ResponseDetailDriver;
 import id.slametriyadi.ojekkece.model.ResponseInsertBooking;
 import id.slametriyadi.ojekkece.model.ResponseMasuk;
 import id.slametriyadi.ojekkece.model.WayPoints.ModelWayPoints;
@@ -42,22 +43,29 @@ public interface RestApi {
     @FormUrlEncoded
     @POST("insert_booking")
     Call<ResponseInsertBooking> getInsertBooking(
-            @Field("f_idUser") String iduser,
+            @Field("f_idUser") int iduser,
             @Field("f_latAwal") String latawal,
             @Field("f_lngAwal") String longawal,
             @Field("f_awal") String awal,
             @Field("f_latAkhir") String latakhir,
             @Field("f_lngAkhir") String longakhir,
-            @Field("f_akhir") String akhir,
             @Field("f_catatan") String catatan,
-            @Field("f_jarak") String jarak,
+            @Field("f_jarak") float jarak,
             @Field("f_token") String token,
-            @Field("f_device") String device
+            @Field("f_device") String device,
+            @Field("f_akhir") String lokasitujuan
+
     );
 
     @FormUrlEncoded
     @POST("checkBooking")
     Call<ResponseCheckBooking> checkBooking(
             @Field("idbooking") String idBooking
+    );
+
+    @FormUrlEncoded
+    @POST("get_driver")
+    Call<ResponseDetailDriver> cekDetailDriver(
+            @Field("f_iddriver") String idDriver
     );
 }

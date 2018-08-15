@@ -14,4 +14,5 @@
     <string name="requireEmailPassword">Please Use Email and Password to Register</string>
     <string name="Register">Register</string>
     <string name="cancel">Cancel</string>
+    <string name="title_activity_detail_posisi_driver">Map</string>
 </resources>

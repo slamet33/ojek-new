@@ -1,12 +1,17 @@
 package id.slametriyadi.ojekkece;
 
+import android.Manifest;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -49,6 +54,16 @@ public class MainActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
         manager = new SessionManager(MainActivity.this);
+
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && checkSelfPermission(Manifest.permission.READ_PHONE_STATE)
+                    != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(
+                        new String[]{Manifest.permission.READ_PHONE_STATE},
+                        110);
+            }
+            return;
+        }
     }
 
     @OnClick({R.id.btnSignIn, R.id.btnRegister})
@@ -122,7 +137,7 @@ public class MainActivity extends AppCompatActivity {
                         @Override
                         public void onFailure(Call<ResponseDaftar> call, Throwable t) {
                             dialogInterface.dismiss();
-                            Toast.makeText(MainActivity.this, "Check your connection! "+ t.getMessage() , Toast.LENGTH_SHORT).show();
+                            Toast.makeText(MainActivity.this, "Check your connection! " + t.getMessage(), Toast.LENGTH_SHORT).show();
                         }
                     });
                 }
@@ -144,6 +159,10 @@ public class MainActivity extends AppCompatActivity {
         dialoglogin.setTitle("Login");
         dialoglogin.setMessage("Please Use Email and Password to Login");
 
+        final String device = HeroHelper.getDeviceUUID(MainActivity.this);
+        Toast.makeText(this, "" + HeroHelper.getDeviceUUID(MainActivity.this), Toast.LENGTH_SHORT).show();
+        Log.d("uuuis", HeroHelper.getDeviceUUID(MainActivity.this));
+
         LayoutInflater inflater = LayoutInflater.from(this);
         View tampilLogin = inflater.inflate(R.layout.layout_login, null);
         final EditText edtEmail = tampilLogin.findViewById(R.id.edtEmail);
@@ -157,11 +176,10 @@ public class MainActivity extends AppCompatActivity {
                     Snackbar.make(rootlayout, R.string.requireemial, Snackbar.LENGTH_SHORT).show();
                 } else if (TextUtils.isEmpty(edtPassword.getText().toString())) {
                     Snackbar.make(rootlayout, R.string.requirepassword, Snackbar.LENGTH_SHORT).show();
-                } else if (edtPassword.length() < 6){
+                } else if (edtPassword.length() < 6) {
                     Snackbar.make(rootlayout, R.string.minimumpassord, Snackbar.LENGTH_SHORT).show();
-                } else{
+                } else {
                     RestApi api = InitRetrofit.getInstance();
-                    String device = HeroHelper.getDeviceUUID(MainActivity.this);
                     Call<ResponseMasuk> masukCall = api.requestMasuk(
                             device,
                             edtEmail.getText().toString(),
@@ -170,11 +188,11 @@ public class MainActivity extends AppCompatActivity {
                     masukCall.enqueue(new Callback<ResponseMasuk>() {
                         @Override
                         public void onResponse(Call<ResponseMasuk> call, Response<ResponseMasuk> response) {
-                            if (response.isSuccessful()){
+                            if (response.isSuccessful()) {
                                 String result = response.body().getResult();
                                 String msg = response.body().getMsg();
 
-                                if (result.equals("true")){
+                                if (result.equals("true")) {
                                     Toast.makeText(MainActivity.this, msg, Toast.LENGTH_SHORT).show();
                                     Data d = response.body().getData();
                                     manager.setIduser(d.getIdUser());
@@ -196,7 +214,7 @@ public class MainActivity extends AppCompatActivity {
                         @Override
                         public void onFailure(Call<ResponseMasuk> call, Throwable t) {
                             dialog.dismiss();
-                            Toast.makeText(MainActivity.this,"Check Your Connection!" , Toast.LENGTH_SHORT).show();
+                            Toast.makeText(MainActivity.this, "Check Your Connection!", Toast.LENGTH_SHORT).show();
                         }
                     });
                 }

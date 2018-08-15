@@ -3,6 +3,7 @@ package id.slametriyadi.ojekkece.activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.Toast;
 
@@ -54,9 +55,11 @@ public class FindDriverActivity extends AppCompatActivity {
                     String msg = response.body().getMsg();
                     if (result.equals("true")) {
                         String idDriver = response.body().getDriver();
-                        Intent i = new Intent(FindDriverActivity.this, DetailDriverActivity.class);
+                        Log.d("IDDRIVER", response.body().getDriver());
+                        Intent i = new Intent(FindDriverActivity.this, DetailPosisiDriverActivity.class);
                         i.putExtra(MyContants.IDDRIVER, idDriver);
                         Toast.makeText(FindDriverActivity.this, msg, Toast.LENGTH_SHORT).show();
+                        startActivity(i);
                         finish();
                     } else {
                         Toast.makeText(FindDriverActivity.this, msg, Toast.LENGTH_SHORT).show();
@@ -89,7 +92,6 @@ public class FindDriverActivity extends AppCompatActivity {
             @Override
             public void run() {
                 checkBooking();
-                Toast.makeText(FindDriverActivity.this, "Refresh", Toast.LENGTH_SHORT).show();
             }
         }, 0 , 3000);
     }

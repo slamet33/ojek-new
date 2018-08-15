@@ -95,6 +95,10 @@ public class HeroHelper {
         return sb.toString();
     }
 
+    public static String removeLastChar(String str) {
+        return str.substring(0, str.length() - 2);
+    }
+
 
     public static void error(Exception e) {
         if (DEBUG == 1) {
@@ -997,19 +1001,19 @@ public class HeroHelper {
         return Base64.encodeToString(byteArray, Base64.DEFAULT);
     }
 
-    public static double distance(double lat1, double lng1, double lat2, double lng2, String unit){
+    public static double distance(double lat1, double lng1, double lat2, double lng2, String unit) {
         double earthRadius = 6371.0;
-        if (unit.equalsIgnoreCase("M")){
+        if (unit.equalsIgnoreCase("M")) {
             earthRadius = 6371 * 1000;
-        }else if(unit.equalsIgnoreCase("N")){
-            earthRadius=6371.75;
+        } else if (unit.equalsIgnoreCase("N")) {
+            earthRadius = 6371.75;
         }
-        double dLat = Math.toRadians(lat2-lat1);
-        double dLng = Math.toRadians(lng2-lng1);
+        double dLat = Math.toRadians(lat2 - lat1);
+        double dLng = Math.toRadians(lng2 - lng1);
         double sindLat = Math.sin(dLat / 2);
         double sindLng = Math.sin(dLng / 2);
 
-        double a = Math.pow(sindLat,2)+ Math.pow(sindLng,2) * Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2));
+        double a = Math.pow(sindLat, 2) + Math.pow(sindLng, 2) * Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2));
         double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
         double dist = earthRadius * c;
         return dist;
